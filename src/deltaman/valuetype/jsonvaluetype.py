@@ -6,7 +6,22 @@ class JSONArray(ValueType):
         pass
 
     @staticmethod
-    def _get_nested_values_for_type(raw_value):
+    def generate_type_scalar_metrics(raw_value):
+        '''
+            Return type scalar metrics
+        '''
+        if raw_value is None:
+            return {
+                "num_items": 0
+            }
+
+        else:
+            return {
+                "num_items": len(raw_value)
+            }
+
+    @staticmethod
+    def get_nested_values_for_type(raw_value):
         '''
             For now, we are not treating arrays as nested. Hence, returning an empty iterable object.
         '''
@@ -17,7 +32,22 @@ class JSONDict(ValueType):
         pass
 
     @staticmethod
-    def _get_nested_values_for_type(raw_value):
+    def generate_type_scalar_metrics(raw_value):
+        '''
+            Return type scalar metrics
+        '''
+        if raw_value is None:
+            return {
+                "num_items": 0
+            }
+
+        else:
+            return {
+                "num_items": len(raw_value)
+            }
+
+    @staticmethod
+    def get_nested_values_for_type(raw_value):
         '''
         '''
         return raw_value.items()
@@ -27,7 +57,22 @@ class JSONBool(ValueType):
         pass
 
     @staticmethod
-    def _get_nested_values_for_type(raw_value):
+    def generate_type_scalar_metrics(raw_value):
+        '''
+            Return type scalar metrics
+        '''
+        if raw_value is None:
+            return {
+                "value": 0
+            }
+
+        else:
+            return {
+                "value": raw_value
+            }
+
+    @staticmethod
+    def get_nested_values_for_type(raw_value):
         '''
         '''
         return iter(())
@@ -37,7 +82,20 @@ class JSONNumerical(ValueType):
         pass
 
     @staticmethod
-    def _get_nested_values_for_type(raw_value):
+    def generate_type_scalar_metrics(raw_value):
+        '''
+            Return type scalar metrics
+        '''
+        if raw_value is None:
+            return {}
+
+        else:
+            return {
+                "value": raw_value
+            }
+
+    @staticmethod
+    def get_nested_values_for_type(raw_value):
         '''
         '''
         return iter(())
@@ -47,7 +105,30 @@ class JSONString(ValueType):
         pass
 
     @staticmethod
-    def _get_nested_values_for_type(raw_value):
+    def _raw_value_can_cast_to_numeric(raw_value):
+        try:
+            num = float(raw_value)
+            return True
+        except:
+            return False
+
+    @staticmethod
+    def generate_type_scalar_metrics(raw_value):
+        '''
+            Return type scalar metrics
+        '''
+        if raw_value is None:
+            return {}
+
+        else:
+            return {
+                "value": raw_value,
+                "length": len(raw_value),
+                "can_be_numeric": __class__._raw_value_can_cast_to_numeric(raw_value)
+            }
+
+    @staticmethod
+    def get_nested_values_for_type(raw_value):
         '''
         '''
         return iter(())
