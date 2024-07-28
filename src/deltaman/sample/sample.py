@@ -2,6 +2,8 @@ from typing import Union, Dict, List, Tuple
 import json
 from src.deltaman.value import JSONValue
 import pandas as pd
+import glob
+import os
 
 
 class JSONSampleCollection:
@@ -12,6 +14,17 @@ class JSONSampleCollection:
             self.sample_collection[sample_id] = JSONSample.parse_str_payload(sample_id=sample_id, payload=sample_payload, max_depth=max_depth)
 
         self.initialize_path_aggregate_scalar_metrics()
+
+    @staticmethod
+    def from_directory(directory_path: str, max_depth: int):
+        filename_l = glob.glob(os.path.join(directory_path,"*"))
+        raw_sample_l = []
+        for filename in filename_l:
+            with open(filename, "rt") as f:
+                filecontents = f.read()
+            raw_sample_l.append((filename, filecontents))
+        return JSONSampleCollection(raw_sample_l=raw_sample_l, max_depth=max_depth)
+
 
     @staticmethod
     def extract_path_aggregate_metrics_from_path_collected_rows(rows):
@@ -69,9 +82,12 @@ class JSONSampleCollection:
                 path_collected_metrics_series_l.append(pd.Series({"value_path": value_path, "value_level": value.value_level, "sample_id": sample_id, **value.metrics}))
         path_collected_metrics_df = pd.DataFrame(path_collected_metrics_series_l)
         del path_collected_metrics_series_l
-        path_collected_metrics_df = path_collected_metrics_df
-        path_aggregate_metrics = path_collected_metrics_df.groupby("value_path").apply(JSONSampleCollection.extract_path_aggregate_metrics_from_path_collected_rows)
-        self.path_aggregate_metrics = path_aggregate_metrics.apply(lambda l: pd.Series(l))
+        self.path_collected_metrics_df = path_collected_metrics_df
+        self.path_aggregate_metrics = path_collected_metrics_df.groupby("value_path").apply(JSONSampleCollection.extract_path_aggregate_metrics_from_path_collected_rows)
+        self.path_aggregate_metrics = self.path_aggregate_metrics.apply(lambda l: pd.Series(l))
+
+    def get_path_aggregate_scalar_metrics(self):
+        return self.path_aggregate_metrics.to_dict(orient='index')
 
 
 class JSONSample:
