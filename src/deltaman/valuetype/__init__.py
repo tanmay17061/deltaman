@@ -8,4 +8,5 @@ type_str_to_valuetype_mapper = {
     "dict": JSONDict,
     "list": JSONArray,
     "bool": JSONBool,
+    "NoneType": JSONNull,
 }

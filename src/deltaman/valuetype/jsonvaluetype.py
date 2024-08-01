@@ -77,6 +77,29 @@ class JSONBool(ValueType):
         '''
         return iter(())
 
+class JSONNull(ValueType):
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def generate_type_scalar_metrics(raw_value):
+        '''
+            Return type scalar metrics
+        '''
+        if raw_value is None:
+            return {}
+
+        else:
+            return {
+                "value": raw_value
+            }
+
+    @staticmethod
+    def get_nested_values_for_type(raw_value):
+        '''
+        '''
+        return iter(())
+
 class JSONNumerical(ValueType):
     def __init__(self):
         pass

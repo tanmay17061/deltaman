@@ -4,7 +4,7 @@ from src.deltaman.value import JSONValue
 import pandas as pd
 import glob
 import os
-
+import math
 
 class JSONSampleCollection:
     def __init__(self, raw_sample_l: List[Tuple[str,str]], max_depth: int):
@@ -29,17 +29,19 @@ class JSONSampleCollection:
     @staticmethod
     def extract_path_aggregate_metrics_from_path_collected_rows(rows):
 
+        # print(f"extract_path_aggregate_metrics_from_path_collected_rows called on {rows.value_path=}")
         ret_path_aggregate_value_metrics = {}
         ret_path_aggregate_value_metrics["total_samples"] = rows.shape[0]
         ret_path_aggregate_value_metrics["is_present_count"] = rows.is_present.sum()
         ret_path_aggregate_value_metrics["is_filled_count"] = rows.is_filled.sum()
 
-        value_type_counts = rows.value.apply(lambda v: type(v).__name__).value_counts()
+        value_type_counts = rows.value_type_str.value_counts()
 
         value_type_counts_dict = value_type_counts.to_dict()
         ret_path_aggregate_value_metrics["value_type_counts"] = value_type_counts_dict
 
         if len(value_type_counts_dict) > 1:
+            # For now, 1 value_path can only consist of 1 value_type_str for aggregation to work.
             ret_path_aggregate_value_metrics["path_aggregate_value_metrics_extraction_success"] = False
             return ret_path_aggregate_value_metrics
         else:
@@ -51,13 +53,13 @@ class JSONSampleCollection:
             ret_path_aggregate_value_metrics["std_num_items"] = rows.num_items.std()
 
         if 'int' in value_type_counts_dict.keys() or 'float' in value_type_counts_dict.keys():
-            ret_path_aggregate_value_metrics["mean_value"] = rows.value.mean()
-            ret_path_aggregate_value_metrics["median_value"] = rows.value.median()
-            ret_path_aggregate_value_metrics["std_value"] = rows.value.std()
+            ret_path_aggregate_value_metrics["mean_value"] = rows.raw_value.mean()
+            ret_path_aggregate_value_metrics["median_value"] = rows.raw_value.median()
+            ret_path_aggregate_value_metrics["std_value"] = rows.raw_value.std()
         
         if 'bool' in value_type_counts_dict.keys():
-            ret_path_aggregate_value_metrics["value_true_count"] = rows.value.astype(int).sum()
-            ret_path_aggregate_value_metrics["value_false_count"] = rows.value.shape[0] - rows.value.astype(int).sum()
+            ret_path_aggregate_value_metrics["value_true_count"] = rows.raw_value.astype(int).sum()
+            ret_path_aggregate_value_metrics["value_false_count"] = rows.raw_value.shape[0] - rows.raw_value.astype(int).sum()
 
 
         if 'str' in value_type_counts_dict.keys():
@@ -66,7 +68,6 @@ class JSONSampleCollection:
             ret_path_aggregate_value_metrics["std_length"] = rows.length.std()
             ret_path_aggregate_value_metrics["can_be_numeric_count"] = rows.can_be_numeric.astype(int).sum()
             ret_path_aggregate_value_metrics["can_not_be_numeric_count"] = rows.can_be_numeric.shape[0] - rows.can_be_numeric.astype(int).sum()
-
 
         return ret_path_aggregate_value_metrics
 
@@ -79,12 +80,11 @@ class JSONSampleCollection:
 
         for sample_id, sample in self.sample_collection.items():
             for value_path, value in sample.values:
-                path_collected_metrics_series_l.append(pd.Series({"value_path": value_path, "value_level": value.value_level, "sample_id": sample_id, **value.metrics}))
+                path_collected_metrics_series_l.append(pd.Series({"raw_value": value.raw_value, "value_type_str": value.value_type_str, "value_path": value_path, "value_level": value.value_level, "sample_id": sample_id, **value.metrics}))
         path_collected_metrics_df = pd.DataFrame(path_collected_metrics_series_l)
         del path_collected_metrics_series_l
         self.path_collected_metrics_df = path_collected_metrics_df
         self.path_aggregate_metrics = path_collected_metrics_df.groupby("value_path").apply(JSONSampleCollection.extract_path_aggregate_metrics_from_path_collected_rows)
-        self.path_aggregate_metrics = self.path_aggregate_metrics.apply(lambda l: pd.Series(l))
 
     def get_path_aggregate_scalar_metrics(self):
         return self.path_aggregate_metrics.to_dict(orient='index')
