@@ -24,6 +24,13 @@ class JSONValue:
     def _get_value_type_str(value: Union[Dict, List]):
         return type(value).__name__
 
+    def diff_of_raw_value(self, v_other):
+
+        if self.value_type_str != v_other.value_type_str:
+            return f"value type mismatch: ({self.value_type_str} != {v_other.value_type_str}) for raw values: ({self.raw_value} != {v_other.raw_value})"
+        else:
+            return self.value_type.diff_of_raw_values(self.raw_value, v_other.raw_value)
+
     @staticmethod
     def _digest_raw_value(raw_value, value_path: str, value_level: int, max_depth: int = 3):
         all_values = []

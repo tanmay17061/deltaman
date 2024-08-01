@@ -27,6 +27,10 @@ class JSONArray(ValueType):
         '''
         return iter(())
 
+    @staticmethod
+    def diff_of_raw_values(rv_1, rv_2):
+        return len(rv_1) - len(rv_2)
+
 class JSONDict(ValueType):
     def __init__(self):
         pass
@@ -51,6 +55,10 @@ class JSONDict(ValueType):
         '''
         '''
         return raw_value.items()
+
+    @staticmethod
+    def diff_of_raw_values(rv_1, rv_2):
+        return len(rv_1) - len(rv_2)
 
 class JSONBool(ValueType):
     def __init__(self):
@@ -77,6 +85,10 @@ class JSONBool(ValueType):
         '''
         return iter(())
 
+    @staticmethod
+    def diff_of_raw_values(rv_1, rv_2):
+        return rv_1 != rv_2
+
 class JSONNull(ValueType):
     def __init__(self):
         pass
@@ -100,6 +112,11 @@ class JSONNull(ValueType):
         '''
         return iter(())
 
+    @staticmethod
+    def diff_of_raw_values(rv_1, rv_2):
+        # if both raw values are None, we can say that they are always same.
+        return False
+
 class JSONNumerical(ValueType):
     def __init__(self):
         pass
@@ -122,6 +139,10 @@ class JSONNumerical(ValueType):
         '''
         '''
         return iter(())
+
+    @staticmethod
+    def diff_of_raw_values(rv_1, rv_2):
+        return rv_1 - rv_2
 
 class JSONString(ValueType):
     def __init__(self):
@@ -155,3 +176,7 @@ class JSONString(ValueType):
         '''
         '''
         return iter(())
+
+    @staticmethod
+    def diff_of_raw_values(rv_1, rv_2):
+        return len(rv_1) - len(rv_2)

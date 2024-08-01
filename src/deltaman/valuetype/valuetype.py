@@ -31,3 +31,7 @@ class ValueType:
             Return an iterable
         '''
         raise NotImplementedError()
+    
+    @staticmethod
+    def diff_of_raw_values(rv_1, rv_2):
+        raise NotImplementedError()
