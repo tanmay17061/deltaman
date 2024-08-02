@@ -141,7 +141,14 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=open("requirements.txt", "rt").read().split("\n"),
+    install_requires=[
+        "build==1.2.1",
+        "pandas==2.2.2",
+        "pyproject_hooks==1.1.0",
+        "pytz==2024.1",
+        "tomli==2.0.1",
+        "tzdata==2024.1"
+    ],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
