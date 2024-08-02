@@ -123,25 +123,30 @@ class JSONSample:
         other_flat_df = pd.DataFrame(other_flat_l).set_index("value_path")
 
         common_flat_joined_df = self_flat_df.join(other_flat_df, how="inner", lsuffix='_l', rsuffix='_r')
-        diff_k = {}
+        common_diff = {}
         for i in range(common_flat_joined_df.shape[0]):
             common_flat_joined_row = common_flat_joined_df.iloc[i]
             value_path_row = common_flat_joined_df.index[i]
             raw_value_diff = common_flat_joined_row["value_object_l"].diff_of_raw_value(common_flat_joined_row["value_object_r"])
-            diff_k[value_path_row] = raw_value_diff
-        return diff_k
+            common_diff[value_path_row] = raw_value_diff
 
 
-        # self_keys = set(self_flat_df.index)
-        # other_keys = set(other_flat_df.index)
+        self_keys = set(self_flat_df.index)
+        other_keys = set(other_flat_df.index)
 
-        # positive_diff_keys = self_keys - other_keys
-        # negative_diff_keys = other_keys - self_keys
+        positive_diff_keys = self_keys - other_keys
+        negative_diff_keys = other_keys - self_keys
         # common_keys = self_keys.intersection(other_keys)
 
-        # positive_diff = {k:self_scalar_metrics[k] for k in positive_diff_keys}
-        # negative_diff = {k:other_scalar_metrics[k] for k in negative_diff_keys}
+        positive_diff = {k: "value missing in RHS JSONSample" for k in positive_diff_keys}
+        negative_diff = {k: "value missing in LHS JSONSample" for k in negative_diff_keys}
         # common_diff = {k: JSONValue.compare_diff_of_raw_values(self_scalar_metrics[k], other_scalar_metrics[k]) for k in common_keys}
+
+        ret_diff = common_diff
+        ret_diff.update(positive_diff)
+        ret_diff.update(negative_diff)
+
+        return ret_diff
 
     @staticmethod
     def parse_dict_payload(sample_id: str, payload: dict, max_depth: int):
