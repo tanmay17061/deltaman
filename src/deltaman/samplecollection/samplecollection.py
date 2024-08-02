@@ -15,7 +15,7 @@ class JSONSampleCollection:
         self.initialize_path_aggregate_scalar_metrics()
 
     @staticmethod
-    def from_directory(directory_path: str, max_depth: int):
+    def from_directory(directory_path: str, max_depth: int = 10):
         filename_l = glob.glob(os.path.join(directory_path,"*"))
         assert filename_l, "directory for initialising sample collection: {directory_path} is empty or does not exist."
         raw_sample_l = []
