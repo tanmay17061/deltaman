@@ -11,27 +11,29 @@ def main():
     parser_collections = subparsers.add_parser("collections", help="Process collections")
     parser_collections.add_argument("collection1", type=str, help="Path to the first collection's directory")
     parser_collections.add_argument("collection2", type=str, help="Path to the second collection's directory")
+    parser_collections.add_argument('--max_depth', type=int, default=10, help='Maximum depth of JSON values to explore (default = 10)')
 
     # Create the parser for the "samples" command
     parser_samples = subparsers.add_parser("samples", help="Process samples")
     parser_samples.add_argument("sample1", type=str, help="Path to the first sample file")
     parser_samples.add_argument("sample2", type=str, help="Path to the second sample file")
-    
+    parser_samples.add_argument('--max_depth', type=int, default=10, help='Maximum depth of JSON values to explore (default = 10)')
+
     # Parse the arguments
     args = parser.parse_args()
     
     # Implement command functionality
     if args.command == "collections":
-        return process_collections(args.collection1, args.collection2)
+        print(process_collections(args.collection1, args.collection2, args.max_depth))
     elif args.command == "samples":
-        process_samples(args.sample1, args.sample2)
+        process_samples(args.sample1, args.sample2, args.max_depth)
     else:
         parser.print_help()
 
-def process_collections(collection1, collection2):
+def process_collections(collection1, collection2, max_depth):
 
-    sc1 = JSONSampleCollection.from_directory(collection1)
-    sc2 = JSONSampleCollection.from_directory(collection2)
+    sc1 = JSONSampleCollection.from_directory(collection1, max_depth=max_depth)
+    sc2 = JSONSampleCollection.from_directory(collection2, max_depth=max_depth)
     return sc1.diff(sc2)
 
 def process_samples(sample1, sample2):

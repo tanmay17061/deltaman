@@ -1,4 +1,4 @@
-from src.deltaman.valuetype import ValueType, type_str_to_valuetype_mapper
+from deltaman.valuetype import ValueType, type_str_to_valuetype_mapper
 from typing import Union, Dict, List
 
 

@@ -1,4 +1,4 @@
-from src.deltaman.valuetype.valuetype import ValueType
+from deltaman.valuetype.valuetype import ValueType
 
 
 class JSONArray(ValueType):

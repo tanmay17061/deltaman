@@ -1,1 +1,1 @@
-from src.deltaman.value.value import *
+from deltaman.value.value import *

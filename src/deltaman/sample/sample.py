@@ -1,6 +1,6 @@
 from typing import Dict
 import json
-from src.deltaman.value import JSONValue
+from deltaman.value import JSONValue
 import pandas as pd
 import os
 import math

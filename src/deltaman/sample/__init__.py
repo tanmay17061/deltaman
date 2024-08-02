@@ -1,1 +1,1 @@
-from src.deltaman.sample.sample import *
+from deltaman.sample.sample import *

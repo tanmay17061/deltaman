@@ -2,7 +2,8 @@ import os
 from typing import List, Tuple
 import glob
 import pandas as pd
-from src.deltaman.sample import JSONSample
+from deltaman.sample import JSONSample
+import json
 
 class JSONSampleCollection:
     def __init__(self, raw_sample_l: List[Tuple[str,str]], max_depth: int):
@@ -16,6 +17,7 @@ class JSONSampleCollection:
     @staticmethod
     def from_directory(directory_path: str, max_depth: int):
         filename_l = glob.glob(os.path.join(directory_path,"*"))
+        assert filename_l, "directory for initialising sample collection: {directory_path} is empty or does not exist."
         raw_sample_l = []
         for filename in filename_l:
             with open(filename, "rt") as f:
@@ -65,7 +67,6 @@ class JSONSampleCollection:
             ret_path_aggregate_value_metrics["can_be_numeric_count"] = float(rows.can_be_numeric.astype(int).sum())
             ret_path_aggregate_value_metrics["can_not_be_numeric_count"] = float(rows.can_be_numeric.shape[0] - rows.can_be_numeric.astype(int).sum())
 
-        # print(f"{type(ret_path_aggregate_value_metrics)=}")
         return ret_path_aggregate_value_metrics
 
     def initialize_path_aggregate_scalar_metrics(self):
@@ -84,9 +85,7 @@ class JSONSampleCollection:
         self.path_aggregate_metrics = path_collected_metrics_df.groupby("value_path").apply(JSONSampleCollection.extract_path_aggregate_metrics_from_path_collected_rows)
 
     def get_path_aggregate_scalar_metrics(self):
-        print(f"{type(self.path_aggregate_metrics)=}")
         return self.path_aggregate_metrics.to_dict()
-        # return self.path_aggregate_metrics.to_dict(orient='index')
     
     def diff(self, sc_other):
 
@@ -94,5 +93,5 @@ class JSONSampleCollection:
         other_scalar_metrics = sc_other.get_path_aggregate_scalar_metrics()
         self_scalar_metrics_sample = JSONSample.parse_dict_payload(sample_id="self_scalar_metrics", payload=self_scalar_metrics, max_depth=10, root_path='')
         other_scalar_metrics_sample = JSONSample.parse_dict_payload(sample_id="other_scalar_metrics", payload=other_scalar_metrics, max_depth=10, root_path='')
-        return self_scalar_metrics_sample.diff(other_scalar_metrics_sample)
+        return json.dumps(self_scalar_metrics_sample.diff(other_scalar_metrics_sample))
 

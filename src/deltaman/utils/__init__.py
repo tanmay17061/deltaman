@@ -1,1 +1,1 @@
-from src.deltaman.utils.utils import *
+from deltaman.utils.utils import *
