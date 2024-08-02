@@ -47,6 +47,8 @@ class JSONValue:
         if value_level >= max_depth: return all_values
 
         for nested_value_path,nested_raw_value in cur_value._get_nested_values():
-            nested_value_path = value_path + "." + nested_value_path
+            if value_path:
+                nested_value_path = value_path + "." + nested_value_path
+
             all_values.extend(JSONValue._digest_raw_value(raw_value=nested_raw_value, value_path=nested_value_path, value_level=value_level+1, max_depth=max_depth))
         return all_values
