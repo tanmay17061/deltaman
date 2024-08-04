@@ -57,7 +57,6 @@ class JSONSample:
 
     @staticmethod
     def parse_dict_payload(sample_id: str, payload: Dict, max_depth: int, root_path="root"):
-
         value_l = JSONValue._digest_raw_value(raw_value=payload, value_path=root_path, value_level=0, max_depth=max_depth)
         return JSONSample(sample_id=sample_id, values=value_l)
 
