@@ -157,6 +157,13 @@ class JSONString(ValueType):
             return False
 
     @staticmethod
+    def _get_ord_sum(raw_value):
+        try:
+            return sum([ord(v) for v in raw_value])
+        except:
+            return -1
+
+    @staticmethod
     def generate_type_scalar_metrics(raw_value):
         '''
             Return type scalar metrics
@@ -168,6 +175,7 @@ class JSONString(ValueType):
             return {
                 "value": raw_value,
                 "length": len(raw_value),
+                "ord_sum": __class__._get_ord_sum(raw_value),
                 "can_be_numeric": __class__._raw_value_can_cast_to_numeric(raw_value)
             }
 

@@ -64,6 +64,11 @@ class JSONSampleCollection:
             ret_path_aggregate_value_metrics["mean_length"] = float(rows.length.mean())
             ret_path_aggregate_value_metrics["median_length"] = float(rows.length.median())
             ret_path_aggregate_value_metrics["std_length"] = float(rows.length.std())
+
+            ret_path_aggregate_value_metrics["mean_ord_sum"] = float(rows.ord_sum.mean())
+            ret_path_aggregate_value_metrics["median_ord_sum"] = float(rows.ord_sum.median())
+            ret_path_aggregate_value_metrics["std_ord_sum"] = float(rows.ord_sum.std())
+
             ret_path_aggregate_value_metrics["can_be_numeric_count"] = float(rows.can_be_numeric.astype(int).sum())
             ret_path_aggregate_value_metrics["can_not_be_numeric_count"] = float(rows.can_be_numeric.shape[0] - rows.can_be_numeric.astype(int).sum())
 
@@ -86,12 +91,12 @@ class JSONSampleCollection:
 
     def get_path_aggregate_scalar_metrics(self):
         return self.path_aggregate_metrics.to_dict()
-    
+
     def diff(self, sc_other):
 
         self_scalar_metrics = self.get_path_aggregate_scalar_metrics()
         other_scalar_metrics = sc_other.get_path_aggregate_scalar_metrics()
         self_scalar_metrics_sample = JSONSample.parse_dict_payload(sample_id="self_scalar_metrics", payload=self_scalar_metrics, max_depth=10, root_path='')
         other_scalar_metrics_sample = JSONSample.parse_dict_payload(sample_id="other_scalar_metrics", payload=other_scalar_metrics, max_depth=10, root_path='')
-        return json.dumps(self_scalar_metrics_sample.diff(other_scalar_metrics_sample))
+        return self_scalar_metrics_sample.diff(other_scalar_metrics_sample)
 
