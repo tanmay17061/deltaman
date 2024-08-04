@@ -56,6 +56,20 @@ class JSONSample:
         return ret_diff
 
     @staticmethod
+    def from_directory(file_path: str, max_depth: int = 10):
+        with open(file_path, "rt") as f:
+            filecontent = f.read()
+        sample = JSONSample.parse_str_payload(sample_id="dummy_sample_id", payload=filecontent, max_depth=max_depth)
+        return sample
+    
+    def to_dict(self, return_raw_value=False):
+        self_flat_l = self.flatten_to_list()
+        self_flat_df = pd.DataFrame(self_flat_l).set_index("value_path")
+        if not return_raw_value:
+            del self_flat_df["raw_value"]
+        return self_flat_df.to_dict(orient="index")
+
+    @staticmethod
     def parse_dict_payload(sample_id: str, payload: Dict, max_depth: int, root_path="root"):
         value_l = JSONValue._digest_raw_value(raw_value=payload, value_path=root_path, value_level=0, max_depth=max_depth)
         return JSONSample(sample_id=sample_id, values=value_l)

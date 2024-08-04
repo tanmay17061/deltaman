@@ -1,5 +1,6 @@
 import argparse
 from deltaman.samplecollection import JSONSampleCollection
+from deltaman.sample import JSONSample
 import json
 
 def main():
@@ -21,9 +22,8 @@ def main():
     parser_collections.add_argument('--max_depth', type=int, default=10, help='Maximum depth of JSON values to explore (default = 10)')
 
     # Create the parser for the "samples" command
-    parser_samples = subparsers.add_parser("samples", help="Process samples")
-    parser_samples.add_argument("sample1", type=str, help="Path to the first sample file")
-    parser_samples.add_argument("sample2", type=str, help="Path to the second sample file")
+    parser_samples = subparsers.add_parser("sample", help="Parse a single sample")
+    parser_samples.add_argument("sample", type=str, help="Path to the first sample file")
     parser_samples.add_argument('--max_depth', type=int, default=10, help='Maximum depth of JSON values to explore (default = 10)')
 
     # Parse the arguments
@@ -34,8 +34,8 @@ def main():
         print(collections_diff(args.collection1, args.collection2, args.max_depth))
     elif args.command == "collection_aggregate":
         print(collection_aggregate(args.collection, args.max_depth))
-    elif args.command == "samples":
-        process_samples(args.sample1, args.sample2, args.max_depth)
+    elif args.command == "sample":
+        print(process_samples(args.sample, args.max_depth))
     else:
         parser.print_help()
 
@@ -50,5 +50,7 @@ def collection_aggregate(collection, max_depth):
     sc = JSONSampleCollection.from_directory(collection, max_depth=max_depth)
     return json.dumps(sc.get_path_aggregate_scalar_metrics())
 
-def process_samples(sample1, sample2):
-    raise NotImplementedError("Yet to parse JSONSample from file path.")
+def process_samples(sample_path, max_depth):
+    sample = JSONSample.from_directory(sample_path, max_depth)
+    d = json.dumps(sample.to_dict())
+    return d
