@@ -33,6 +33,8 @@ class JSONValue:
 
     @staticmethod
     def _digest_raw_value(raw_value, value_path: str, value_level: int, max_depth: int = 3):
+
+        value_path = str(value_path)
         all_values = []
         cur_value = JSONValue(**{
                 "raw_value": raw_value,
@@ -47,6 +49,8 @@ class JSONValue:
         if value_level >= max_depth: return all_values
 
         for nested_value_path,nested_raw_value in cur_value._get_nested_values():
+
+            nested_value_path = str(nested_value_path)
             if value_path:
                 nested_value_path = value_path + "." + nested_value_path
 

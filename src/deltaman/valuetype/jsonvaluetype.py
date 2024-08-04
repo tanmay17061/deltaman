@@ -25,7 +25,7 @@ class JSONArray(ValueType):
         '''
             For now, we are not treating arrays as nested. Hence, returning an empty iterable object.
         '''
-        return iter(())
+        return enumerate(raw_value)
 
     @staticmethod
     def diff_of_raw_values(rv_1, rv_2):
