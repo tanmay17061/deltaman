@@ -22,7 +22,9 @@ class JSONValue:
 
     @staticmethod
     def _get_value_type_str(value: Union[Dict, List]):
-        return type(value).__name__
+        type_name = type(value).__name__
+        if type_name in ['int', 'float']: type_name = 'numerical'
+        return type_name
 
     def diff_of_raw_value(self, v_other):
 

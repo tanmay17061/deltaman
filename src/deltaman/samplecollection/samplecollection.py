@@ -41,14 +41,12 @@ class JSONSampleCollection:
         ret_path_aggregate_value_metrics["is_present_count"] = float(rows.is_present.sum())
         ret_path_aggregate_value_metrics["is_filled_count"] = float(rows.is_filled.sum())
 
-        # For now, 1 value_path can only consist of 1 value_type_str for aggregation to work.
-
         if value_type_str == 'dict' or value_type_str == 'list':
             ret_path_aggregate_value_metrics["mean_num_items"] = float(rows.num_items.mean())
             ret_path_aggregate_value_metrics["median_num_items"] = float(rows.num_items.median())
             ret_path_aggregate_value_metrics["std_num_items"] = float(rows.num_items.std())
 
-        elif value_type_str == 'int' or value_type_str == 'float':
+        elif value_type_str == 'int' or value_type_str == 'float' or value_type_str == 'numerical':
             ret_path_aggregate_value_metrics["mean_value"] = float(rows.raw_value.mean())
             ret_path_aggregate_value_metrics["median_value"] = float(rows.raw_value.median())
             ret_path_aggregate_value_metrics["std_value"] = float(rows.raw_value.std())
